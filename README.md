@@ -7,77 +7,86 @@ To write a program to implement the K Means Clustering for Customer Segmentation
 1. Hardware – PCs
 2. Anaconda – Python 3.7 Installation / Jupyter notebook
 
-## Algorithm:
-```
-1.Import the necessary packages using import statement.
-2.Read the given csv file using read_csv() method and print the number of contents to be displayed using df.head().
-3.Import KMeans and use for loop to cluster the data.
-4.Predict the cluster and plot data graphs.
-5.Print the outputs and end the program
-```
+## Algorithm
+1.Pick customer segment quantity (k)
+
+2.Seed cluster centers with random data points.
+
+3.Assign customers to closest centers.
+
+4.Re-center clusters and repeat until stable.
+
 ## Program:
 ```
 /*
 Program to implement the K Means Clustering for Customer Segmentation.
 Developed by: M.Harini
 RegisterNumber: 212222240035
-import pandas as pd
-import matplotlib.pyplot as plt
-data = pd.read_csv("/content/Mall_Customers (1) (1).csv")
-
-data.head()
-
-data.info()
-
-data.isnull().sum()
-
-from sklearn.cluster import KMeans
-wcss = []
-
-for i in range(1,11):
-  kmeans = KMeans(n_clusters = i,init = "k-means++")
-  kmeans.fit(data.iloc[:,3:])
-  wcss.append(kmeans.inertia_)
-  
-  plt.plot(range(1,11),wcss)
-plt.xlabel("No. of clusters")
-plt.ylabel("wcss")
-plt.title("Elbow Method")
-
-Km = KMeans(n_clusters = 5)
-Km.fit(data.iloc[:,3:])
-
-y_pred=Km.predict(data.iloc[:,3:])
-y_pred
-
-data["cluster"]=y_pred
-df0=data[data["cluster"]==0]
-df1=data[data["cluster"]==1]
-df2=data[data["cluster"]==2]
-df3=data[data["cluster"]==3]
-df4=data[data["cluster"]==4]
-plt.scatter(df0["Annual Income (k$)"],df0["Spending Score (1-100)"],c="red",label="cluster0")
-plt.scatter(df1["Annual Income (k$)"],df1["Spending Score (1-100)"],c="black",label="cluster1")
-plt.scatter(df2["Annual Income (k$)"],df2["Spending Score (1-100)"],c="blue",label="cluster2")
-plt.scatter(df3["Annual Income (k$)"],df3["Spending Score (1-100)"],c="green",label="cluster3")
-plt.scatter(df4["Annual Income (k$)"],df4["Spending Score (1-100)"],c="magenta",label="cluster4")
-plt.legend()
-plt.title("Customer Segmets")
 */
 
+import pandas as pd
+import numpy as np
+from sklearn.cluster import KMeans
+from sklearn.metrics.pairwise import euclidean_distances
+import matplotlib.pyplot as plt
+
+data=pd.read_csv('/content/Mall_Customers_EX8.csv')
+data
+
+x=data[['Annual Income (k$)', 'Spending Score (1-100)']]
+x
+
+plt.figure(figsize=(4,4))
+plt.scatter(data['Annual Income (k$)'],data['Spending Score (1-100)'])
+plt.xlabel('Annual Income (k$)')
+plt.ylabel('Spending score (1-100)')
+plt.show()
+
+k=5
+kmeans = KMeans(n_clusters=k)
+kmeans.fit(x)
+
+centroids = kmeans.cluster_centers_
+labels = kmeans.labels_
+print("Centroid:")
+print(centroids)
+print("Labels:")
+print(labels)
+
+colors =['r','g','b','c','m']
+for i in range(k):
+  cluster_points =x[labels == i]
+  plt.scatter(cluster_points['Annual Income (k$)'], cluster_points['Spending Score (1-100)'],color=colors[i], label = f'Cluster {i+1}')
+  distances = euclidean_distances(cluster_points,[centroids[i]])
+  radius = np.max(distances)
+  circle = plt.Circle(centroids[i],radius,color=colors[i],fill=False)
+  plt.gca().add_patch(circle)
+  
+plt.scatter(centroids[:,0], centroids[:,1],marker='*',s=200,color='k',label='Centroids')
+plt.title('k-means Clustering')
+plt.xlabel('Annual Income (k$)')
+plt.ylabel('Spending Score (1-100)')
+plt.legend()
+plt.grid(True)
+plt.axis('equal')
+plt.show
 ```
 
 ## Output:
-![image](https://github.com/Harinimuthu17/Implementation-of-K-Means-Clustering-for-Customer-Segmentation/assets/130278614/0e538715-aca3-483b-87b2-b9664bbdc876)
-![image](https://github.com/Harinimuthu17/Implementation-of-K-Means-Clustering-for-Customer-Segmentation/assets/130278614/6325d3e6-e138-4d34-9bf1-af1dddf98d84)
-![image](https://github.com/Harinimuthu17/Implementation-of-K-Means-Clustering-for-Customer-Segmentation/assets/130278614/a01027bd-3904-4f8d-b6b1-0648a2af7402)
-![image](https://github.com/Harinimuthu17/Implementation-of-K-Means-Clustering-for-Customer-Segmentation/assets/130278614/b94d9495-82fa-4849-a902-86f393c24cd7)
-![image](https://github.com/Harinimuthu17/Implementation-of-K-Means-Clustering-for-Customer-Segmentation/assets/130278614/6d97c5f9-6029-4ed4-b1c0-83a7f2772769)
-![image](https://github.com/Harinimuthu17/Implementation-of-K-Means-Clustering-for-Customer-Segmentation/assets/130278614/d80d492b-5c6a-4def-9dd9-3c8ae880837e)
-![image](https://github.com/Harinimuthu17/Implementation-of-K-Means-Clustering-for-Customer-Segmentation/assets/130278614/3bce4af7-d576-4fa3-a7a8-3c8b09876607)
-![image](https://github.com/Harinimuthu17/Implementation-of-K-Means-Clustering-for-Customer-Segmentation/assets/130278614/e82e260c-dbc0-4b6d-98c5-030b1af10580)
 
+## DATA:
+![Screenshot 2024-04-16 235207](https://github.com/sakthipriyadhanusu/Implementation-of-K-Means-Clustering-for-Customer-Segmentation/assets/119393194/8971b362-90f4-4212-9bb7-bde7c21947fc)
 
+![Screenshot 2024-04-16 235216](https://github.com/sakthipriyadhanusu/Implementation-of-K-Means-Clustering-for-Customer-Segmentation/assets/119393194/41d64d86-fed3-466e-9711-59dc813e47cf)
+
+## SCATTER PLOT:
+![Screenshot 2024-04-16 235225](https://github.com/sakthipriyadhanusu/Implementation-of-K-Means-Clustering-for-Customer-Segmentation/assets/119393194/7439bbac-90f6-40a3-afce-0ed387b2a478)
+
+## CENTROIDS:
+![Screenshot 2024-04-16 235245](https://github.com/sakthipriyadhanusu/Implementation-of-K-Means-Clustering-for-Customer-Segmentation/assets/119393194/8968a68e-0e90-4758-a31b-e445705b17b1)
+
+## KMeans Clustering:
+![Screenshot 2024-04-16 235303](https://github.com/sakthipriyadhanusu/Implementation-of-K-Means-Clustering-for-Customer-Segmentation/assets/119393194/1416f4fd-38d2-411d-b1e8-fa191d8f1b1e)
 
 ## Result:
 Thus the program to implement the K Means Clustering for Customer Segmentation is written and verified using python programming.
